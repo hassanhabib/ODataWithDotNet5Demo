@@ -1,11 +1,14 @@
 using System.Linq;
+using Microsoft.AspNet.OData.Builder;
 using Microsoft.AspNet.OData.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OData.Edm;
 using Microsoft.OpenApi.Models;
+using ODataWithDotNet5Demo.Models;
 
 namespace ODataWithDotNet5Demo
 {
@@ -47,9 +50,17 @@ namespace ODataWithDotNet5Demo
             app.UseEndpoints(endpoints =>
             {
                 endpoints.EnableDependencyInjection();
-                endpoints.Select().Filter().Expand();
+                //endpoints.MapODataRoute("api", "api", GetEdmModel());
                 endpoints.MapControllers();
             });
+        }
+
+        private IEdmModel GetEdmModel()
+        {
+            var builder = new ODataConventionModelBuilder();
+            builder.EntitySet<Student>("Students");
+            builder.EntitySet<Teacher>("Teachers");
+            return builder.GetEdmModel();
         }
     }
 }
